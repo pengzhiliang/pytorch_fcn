@@ -1,3 +1,9 @@
+#-*-coding:utf-8-*-
+'''
+Created on Oct 24,2018
+
+@author: pengzhiliang
+'''
 import os
 from os.path import join as pjoin
 import collections
@@ -16,7 +22,25 @@ from tqdm import tqdm
 from torch.utils import data
 from torchvision import transforms
 
+"""
+Pascal Voc 2012 & benchmark_release 数据集介绍：
+详情请见：https://blog.csdn.net/iamoldpan/article/details/79196413
 
+VOC2012数据集分为20类，包括背景为21类，分别如下： 
+- Person: person 
+- Animal: bird, cat, cow, dog, horse, sheep 
+- Vehicle: aeroplane, bicycle, boat, bus, car, motorbike, train 
+- Indoor: bottle, chair, dining table, potted plant, sofa, tv/monitor
+
+VOC2012中的图片并不是都用于分割，用于分割比赛的图片包含原图、图像分类分割和图像物体分割两种png图。
+图像分类分割：在20种物体中，ground-turth图片上每个物体的轮廓填充都有一个特定的颜色，一共20种颜色，比如摩托车用红色表示，人用绿色表示。
+图像物体分割：则仅仅在一副图中生成不同物体的轮廓颜色即可，颜色自己随便填充。
+
+在FCN这篇论文中，我们用到的数据集即是基本的分割数据集，一共有两套分别是benchmark_RELEASE和VOC2012
+
+图像分割的数据集一般都是采用上面说明的VOC2012挑战数据集，有人说benchmark_LELEASE为增强数据集，具体原因我不清楚，
+可能是因为benchmark_LELEASE的图片都是用于分割（一共11355张），而VOC2012仅仅部分图片适用于分割（2913张）吧
+"""
 def get_data_path(name):
     """Extract path to data from config file.
 
@@ -35,16 +59,13 @@ class pascalVOCLoader(data.Dataset):
     """Data loader for the Pascal VOC semantic segmentation dataset.
     
     Download:http://host.robots.ox.ac.uk/pascal/VOC/voc2012/VOCtrainval_11-May-2012.tar
-    
-    Annotations from both the original VOC data (which consist of RGB images
-    in which colours map to specific classes) and the SBD (Berkely) dataset
-    (where annotations are stored as .mat files) are converted into a common
-    `label_mask` format.  Under this format, each mask is an (M,N) array of
-    integer values from 0 to 21, where 0 represents the background class.
+    Download: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
 
-    The label masks are stored in a new folder, called `pre_encoded`, which
-    is added as a subdirectory of the `SegmentationClass` folder in the
-    original Pascal VOC data layout.
+    来自VOC和SBD两个数据集的Annotations（在VOC中是RGB图像且颜色代表特定的类，在SBD中是.mat的格式）
+    转换为通用的“label_mask”格式。 在此格式下，每个掩码是0到21之间的整数值的（M，N）数组，其中0表示背景类。
+   
+    label masks存储在一个名为`pre_encoded`的新文件夹中，
+    该文件夹作为原始Pascal VOC数据目录中`SegmentationClass`文件夹的子目录添加。
 
     A total of five data splits are provided for working with the VOC data:
         train: The original VOC 2012 training data - 1464 images
@@ -59,15 +80,7 @@ class pascalVOCLoader(data.Dataset):
                    rather than VOC 2011) - 904 images
     """
 
-    def __init__(
-        self,
-        root,
-        split="train_aug",
-        is_transform=False,
-        img_size=512,
-        augmentations=None,
-        img_norm=True,
-    ):
+    def __init__(self,root,split="train_aug",is_transform=False,img_size=512,augmentations=None,img_norm=True):
         self.root = os.path.expanduser(root)
         self.split = split
         self.is_transform = is_transform
@@ -80,6 +93,7 @@ class pascalVOCLoader(data.Dataset):
             img_size if isinstance(img_size, tuple) else (img_size, img_size)
         )
         for split in ["train", "val", "trainval"]:
+            # 分别读取VOC2012/ImageSets/Segmentation下的三个文件列表，包含训练信息，并用字典保存
             path = pjoin(self.root, "ImageSets/Segmentation", split + ".txt")
             file_list = tuple(open(path, "r"))
             file_list = [id_.rstrip() for id_ in file_list]
@@ -90,6 +104,7 @@ class pascalVOCLoader(data.Dataset):
                                                            [0.229, 0.224, 0.225])])
 
     def __len__(self):
+        # 返回所选data splits长度，即不同训练集返回相应的训练数据个数
         return len(self.files[self.split])
 
     def __getitem__(self, index):
@@ -149,7 +164,7 @@ class pascalVOCLoader(data.Dataset):
 
     def encode_segmap(self, mask):
         """Encode segmentation label images as pascal classes
-
+        编码mask，将颜色转换为类别标记
         Args:
             mask (np.ndarray): raw segmentation label image of dimension
               (M, N, 3), in which the Pascal classes are encoded as colours.
@@ -167,7 +182,7 @@ class pascalVOCLoader(data.Dataset):
 
     def decode_segmap(self, label_mask, plot=False):
         """Decode segmentation class labels into a color image
-
+        解码mask,类别转换为颜色，方便显示
         Args:
             label_mask (np.ndarray): an (M,N) array of integer values denoting
               the class label at each spatial location.
@@ -197,7 +212,7 @@ class pascalVOCLoader(data.Dataset):
 
     def setup_annotations(self):
         """
-        Download: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
+        将benmark中的训练数据加入
         Sets up Berkley annotations by adding image indices to the
         `train_aug` split and pre-encode all segmentation labels into the
         common label_mask format (if this has not already been done). This
