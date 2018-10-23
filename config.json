@@ -1,0 +1,11 @@
+{
+  "pascal":
+  {
+    "data_path": "/home/pzl/Data/VOCdevkit/VOC2012/"
+  },
+
+  "sbd":
+  {
+    "data_path": "/home/pzl/Data/VOCdevkit/benchmark_RELEASE/"
+  }
+}
