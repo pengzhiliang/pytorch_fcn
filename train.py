@@ -4,7 +4,7 @@ Created on Oct 24,2018
 
 @author: pengzhiliang
 '''
-from __future__ import print_fuction
+from __future__ import print_function
 import os
 import sys
 import yaml
