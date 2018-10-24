@@ -20,6 +20,6 @@ training:
         momentum: 0.99
     loss:
         name: 'cross_entropy'
-        size_average: False
+        size_average: True
     lr_schedule:
     resume: 
