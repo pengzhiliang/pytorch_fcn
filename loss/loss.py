@@ -4,13 +4,13 @@ Created on Oct 24,2018
 
 @author: pengzhiliang
 '''
+import torch.nn.functional as F
 import numpy as np
 
 
 def cross_entropy2d(input, target, weight=None, size_average=True):
     """
-    输入输出图片与mask的交叉熵损失，2d平面的
-    """
+    输入输出图片与mask的交叉熵损失�?d平面�?    """
     n, c, h, w = input.size()
     nt, ht, wt = target.size()
 
