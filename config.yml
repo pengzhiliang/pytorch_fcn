@@ -13,13 +13,16 @@ training:
     val_interval: 1000
     n_workers: 16
     print_interval: 100
+    augmentations:
+        hflip: 0.5
     optimizer:
         name: 'sgd'
-        lr: 1.0e-5
+        lr: 1.0e-4
         weight_decay: 0.0005
         momentum: 0.99
     loss:
         name: 'cross_entropy'
         reduction: 'elementwise_mean'
-    lr_schedule:
-    resume: 
+    lr_schedule: 'cosine_annealing'
+    resume: "./checkpoint/fcn8s_pascal_best_model.pkl"
+
