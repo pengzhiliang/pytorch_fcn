@@ -1,13 +1,17 @@
+#-*-coding:utf-8-*-
+'''
+Created on Oct 24,2018
+
+@author: pengzhiliang
+'''
+from __future__ import print_fuction
 import os
 import sys
 import yaml
 import time
-import shutil
 import torch
-import visdom
 import random
 import argparse
-import datetime
 import numpy as np
 import torch.nn as nn
 import torch.nn.functional as F
@@ -16,13 +20,13 @@ import torchvision.models as models
 from torch.utils import data
 from tqdm import tqdm
 
-from ptsemseg.models import get_model
-from ptsemseg.loss import get_loss_function
-from ptsemseg.loader import get_loader 
-from ptsemseg.metrics import runningScore, averageMeter
-from ptsemseg.augmentations import get_composed_augmentations
-from ptsemseg.schedulers import get_scheduler
-from ptsemseg.optimizers import get_optimizer
+from models import get_model
+from loss import get_loss_function
+from loader import get_loader 
+from metrics import runningScore, averageMeter
+from augmentations import get_composed_augmentations
+from schedulers import get_scheduler
+from optimizers import get_optimizer
 
 
 
