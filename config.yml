@@ -25,5 +25,8 @@ training:
         reduction: 'elementwise_mean'
     lr_schedule: 
         name: 'cosine_annealing'
+        warmup_iters: 100
+        warmup_mode: 'linear'
+        warmup_factor: 0.2
     resume: "./checkpoint/fcn8s_pascal_best_model.pkl"
 
