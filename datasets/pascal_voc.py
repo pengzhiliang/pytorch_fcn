@@ -251,13 +251,21 @@ class pascalVOCLoader(data.Dataset):
 
 
 # Leave code for debugging purposes
-# if __name__ == '__main__':
-#  local_path = '/home/pzl/Data/VOCdevkit/VOC2012/'
-#  bs = 4
-#  dst = pascalVOCLoader(root=local_path, is_transform=True, augmentations=None)
-#  trainloader = data.DataLoader(dst, batch_size=bs)
-#  for i, data in enumerate(trainloader):
-#    imgs, labels = data
-#    if i > 100:
-#      break
+if __name__ == '__main__':
+  local_path = '/home/pzl/Data/VOCdevkit/VOC2012/'
+  bs = 4
+  dst = pascalVOCLoader(root=local_path, is_transform=True, augmentations=None)
+  trainloader = data.DataLoader(dst, batch_size=bs)
+  for i, data in enumerate(trainloader):
+    imgs, labels = data
+    imgs.size()
+    labels.size()
+    if i > 10:
+      break
+  i = 0 
+  for (images, labels) in trainloader:
+    i += 1
+    if i > 10:
+      break
+    
 

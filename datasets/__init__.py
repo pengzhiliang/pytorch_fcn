@@ -1,6 +1,6 @@
 import json
 
-from pascal_voc import pascalVOCLoader
+from pascal_voc import *
 
 
 
