@@ -19,15 +19,14 @@ from tqdm import tqdm
 from ptsemseg.models import get_model
 from ptsemseg.loss import get_loss_function
 from ptsemseg.loader import get_loader 
-from ptsemseg.utils import get_logger
 from ptsemseg.metrics import runningScore, averageMeter
 from ptsemseg.augmentations import get_composed_augmentations
 from ptsemseg.schedulers import get_scheduler
 from ptsemseg.optimizers import get_optimizer
 
-from tensorboardX import SummaryWriter
 
-def train(cfg, writer, logger):
+
+def train(cfg, writer):
     
     # Setup seeds
     torch.manual_seed(cfg.get('seed', 1337))
@@ -83,31 +82,26 @@ def train(cfg, writer, logger):
                         if k != 'name'}
 
     optimizer = optimizer_cls(model.parameters(), **optimizer_params)
-    logger.info("Using optimizer {}".format(optimizer))
-
     scheduler = get_scheduler(optimizer, cfg['training']['lr_schedule'])
 
     loss_fn = get_loss_function(cfg)
-    logger.info("Using loss {}".format(loss_fn))
 
     start_iter = 0
     if cfg['training']['resume'] is not None:
         if os.path.isfile(cfg['training']['resume']):
-            logger.info(
-                "Loading model and optimizer from checkpoint '{}'".format(cfg['training']['resume'])
-            )
+ 
             checkpoint = torch.load(cfg['training']['resume'])
             model.load_state_dict(checkpoint["model_state"])
             optimizer.load_state_dict(checkpoint["optimizer_state"])
             scheduler.load_state_dict(checkpoint["scheduler_state"])
             start_iter = checkpoint["epoch"]
-            logger.info(
+            print("=====>",
                 "Loaded checkpoint '{}' (iter {})".format(
                     cfg['training']['resume'], checkpoint["epoch"]
                 )
             )
         else:
-            logger.info("No checkpoint found at '{}'".format(cfg['training']['resume']))
+            print("=====>","No checkpoint found at '{}'".format(cfg['training']['resume']))
 
     val_loss_meter = averageMeter()
     time_meter = averageMeter()
@@ -143,8 +137,6 @@ def train(cfg, writer, logger):
                                            time_meter.avg / cfg['training']['batch_size'])
 
                 print(print_str)
-                logger.info(print_str)
-                writer.add_scalar('loss/train_loss', loss.item(), i+1)
                 time_meter.reset()
 
             if (i + 1) % cfg['training']['val_interval'] == 0 or \
@@ -165,18 +157,15 @@ def train(cfg, writer, logger):
                         running_metrics_val.update(gt, pred)
                         val_loss_meter.update(val_loss.item())
 
-                writer.add_scalar('loss/val_loss', val_loss_meter.avg, i+1)
-                logger.info("Iter %d Loss: %.4f" % (i + 1, val_loss_meter.avg))
+
+                ptint("Iter %d Loss: %.4f" % (i + 1, val_loss_meter.avg))
 
                 score, class_iou = running_metrics_val.get_scores()
                 for k, v in score.items():
-                    print(k, v)
-                    logger.info('{}: {}'.format(k, v))
-                    writer.add_scalar('val_metrics/{}'.format(k), v, i+1)
+                    print(k,':',v)
 
                 for k, v in class_iou.items():
-                    logger.info('{}: {}'.format(k, v))
-                    writer.add_scalar('val_metrics/cls_{}'.format(k), v, i+1)
+                    print('{}: {}'.format(k, v))
 
                 val_loss_meter.reset()
                 running_metrics_val.reset()
@@ -190,7 +179,7 @@ def train(cfg, writer, logger):
                         "scheduler_state": scheduler.state_dict(),
                         "best_iou": best_iou,
                     }
-                    save_path = os.path.join(writer.file_writer.get_logdir(),
+                    save_path = os.path.join('./checkpoint',
                                              "{}_{}_best_model.pkl".format(
                                                  cfg['model']['arch'],
                                                  cfg['data']['dataset']))
@@ -216,14 +205,6 @@ if __name__ == "__main__":
     with open(args.config) as fp:
         cfg = yaml.load(fp)
 
-    run_id = random.randint(1,100000)
-    logdir = os.path.join('runs', os.path.basename(args.config)[:-4] , str(run_id))
-    writer = SummaryWriter(log_dir=logdir)
+    print("=====> Let the games begin")
 
-    print('RUNDIR: {}'.format(logdir))
-    shutil.copy(args.config, logdir)
-
-    logger = get_logger(logdir)
-    logger.info('Let the games begin')
-
-    train(cfg, writer, logger)
+    train(cfg, writer)
