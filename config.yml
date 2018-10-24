@@ -9,17 +9,17 @@ data:
     path: /home/pzl/Data/VOCdevkit/VOC2012/
 training:
     train_iters: 300000
-    batch_size: 1
+    batch_size: 5
     val_interval: 1000
     n_workers: 16
-    print_interval: 50
+    print_interval: 100
     optimizer:
         name: 'sgd'
-        lr: 1.0e-10
+        lr: 1.0e-5
         weight_decay: 0.0005
         momentum: 0.99
     loss:
         name: 'cross_entropy'
-        size_average: True
+        reduction: 'elementwise_mean'
     lr_schedule:
     resume: 
