@@ -9,8 +9,8 @@ import functools
 import torch.nn as nn
 import torch.nn.functional as F
 
-from ptsemseg.models.utils import get_upsampling_weight
-from ptsemseg.loss import cross_entropy2d
+from utils import get_upsampling_weight
+from loss import cross_entropy2d
 
 # FCN32s
 class fcn32s(nn.Module):
