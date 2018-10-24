@@ -1,7 +1,10 @@
-import torch
+#-*-coding:utf-8-*-
+'''
+Created on Oct 24,2018
+
+@author: pengzhiliang
+'''
 import numpy as np
-import torch.nn as nn
-import torch.nn.functional as F
 
 
 def cross_entropy2d(input, target, weight=None, size_average=True):
