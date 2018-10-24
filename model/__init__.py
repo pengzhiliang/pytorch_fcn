@@ -2,7 +2,7 @@ import copy
 import torchvision.models as models
 import torch
 
-from models.fcn import *
+from fcn import *
 
 
 def get_model(model_dict, n_classes, version=None):

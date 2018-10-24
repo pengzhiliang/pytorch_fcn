@@ -20,9 +20,9 @@ import torchvision.models as models
 from torch.utils import data
 from tqdm import tqdm
 
-from models import get_model
+from model import get_model
 from loss import get_loss_function
-from loader import get_loader 
+from datasets import get_loader 
 from metrics import runningScore, averageMeter
 from augmentations import get_composed_augmentations
 from schedulers import get_scheduler
@@ -30,7 +30,7 @@ from optimizers import get_optimizer
 
 
 
-def train(cfg, writer):
+def train(cfg):
     
     # Setup seeds
     torch.manual_seed(cfg.get('seed', 1337))
@@ -211,4 +211,4 @@ if __name__ == "__main__":
 
     print("=====> Let the games begin")
 
-    train(cfg, writer)
+    train(cfg)

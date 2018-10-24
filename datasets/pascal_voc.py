@@ -16,7 +16,7 @@ import matplotlib.pyplot as plt
 import glob
 
 from PIL import Image
-# Tqdm 是一个快速，可扩展的Python进度条，可以在 Python 长循环中添加一个进度提示信息，用户只需要封装任意的迭代器 tqdm(iterator)
+# Tqdm 是一个快速，可扩展的Python进度条，可以�?Python 长循环中添加一个进度提示信息，用户只需要封装任意的迭代�?tqdm(iterator)
 from tqdm import tqdm
 
 from torch.utils import data
@@ -26,21 +26,17 @@ from torchvision import transforms
 Pascal Voc 2012 & benchmark_release 数据集介绍：
 详情请见：https://blog.csdn.net/iamoldpan/article/details/79196413
 
-VOC2012数据集分为20类，包括背景为21类，分别如下： 
+VOC2012数据集分�?0类，包括背景�?1类，分别如下�?
 - Person: person 
 - Animal: bird, cat, cow, dog, horse, sheep 
 - Vehicle: aeroplane, bicycle, boat, bus, car, motorbike, train 
 - Indoor: bottle, chair, dining table, potted plant, sofa, tv/monitor
 
-VOC2012中的图片并不是都用于分割，用于分割比赛的图片包含原图、图像分类分割和图像物体分割两种png图。
-图像分类分割：在20种物体中，ground-turth图片上每个物体的轮廓填充都有一个特定的颜色，一共20种颜色，比如摩托车用红色表示，人用绿色表示。
-图像物体分割：则仅仅在一副图中生成不同物体的轮廓颜色即可，颜色自己随便填充。
-
+VOC2012中的图片并不是都用于分割，用于分割比赛的图片包含原图、图像分类分割和图像物体分割两种png图�?图像分类分割：在20种物体中，ground-turth图片上每个物体的轮廓填充都有一个特定的颜色，一�?0种颜色，比如摩托车用红色表示，人用绿色表示�?图像物体分割：则仅仅在一副图中生成不同物体的轮廓颜色即可，颜色自己随便填充�?
 在FCN这篇论文中，我们用到的数据集即是基本的分割数据集，一共有两套分别是benchmark_RELEASE和VOC2012
 
 图像分割的数据集一般都是采用上面说明的VOC2012挑战数据集，有人说benchmark_LELEASE为增强数据集，具体原因我不清楚，
-可能是因为benchmark_LELEASE的图片都是用于分割（一共11355张），而VOC2012仅仅部分图片适用于分割（2913张）吧
-"""
+可能是因为benchmark_LELEASE的图片都是用于分割（一�?1355张），而VOC2012仅仅部分图片适用于分割（2913张）�?"""
 def get_data_path(name):
     """Extract path to data from config file.
 
@@ -50,7 +46,7 @@ def get_data_path(name):
     Returns:
         (str): The path to the root directory containing the dataset.
     """
-    js = open("config.json").read()
+    js = open("datapath.json").read()
     data = json.loads(js)
     return os.path.expanduser(data[name]["data_path"])
 
@@ -62,11 +58,8 @@ class pascalVOCLoader(data.Dataset):
     Download: http://www.eecs.berkeley.edu/Research/Projects/CS/vision/grouping/semantic_contours/benchmark.tgz
 
     来自VOC和SBD两个数据集的Annotations（在VOC中是RGB图像且颜色代表特定的类，在SBD中是.mat的格式）
-    转换为通用的“label_mask”格式。 在此格式下，每个掩码是0到21之间的整数值的（M，N）数组，其中0表示背景类。
-   
-    label masks存储在一个名为`pre_encoded`的新文件夹中，
-    该文件夹作为原始Pascal VOC数据目录中`SegmentationClass`文件夹的子目录添加。
-
+    转换为通用的“label_mask”格式�?在此格式下，每个掩码�?�?1之间的整数值的（M，N）数组，其中0表示背景类�?   
+    label masks存储在一个名为`pre_encoded`的新文件夹中�?    该文件夹作为原始Pascal VOC数据目录中`SegmentationClass`文件夹的子目录添加�?
     A total of five data splits are provided for working with the VOC data:
         train: The original VOC 2012 training data - 1464 images
         val: The original VOC 2012 validation data - 1449 images
@@ -164,8 +157,7 @@ class pascalVOCLoader(data.Dataset):
 
     def encode_segmap(self, mask):
         """Encode segmentation label images as pascal classes
-        编码mask，将颜色转换为类别标记
-        Args:
+        编码mask，将颜色转换为类别标�?        Args:
             mask (np.ndarray): raw segmentation label image of dimension
               (M, N, 3), in which the Pascal classes are encoded as colours.
 

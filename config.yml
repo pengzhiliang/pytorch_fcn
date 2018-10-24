@@ -22,4 +22,4 @@ training:
         name: 'cross_entropy'
         size_average: False
     lr_schedule:
-    resume: None
+    resume: 

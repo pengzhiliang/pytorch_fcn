@@ -1,4 +1,4 @@
-from ptsemseg.schedulers.schedulers import *
+from schedulers import *
 
 
 key2scheduler = {'constant_lr': ConstantLR,
