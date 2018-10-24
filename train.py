@@ -53,14 +53,15 @@ def train(cfg):
         data_path,
         is_transform=True,
         split=cfg['data']['train_split'],
-        img_size=(cfg['data']['img_rows'], cfg['data']['img_cols']),
+        #img_size=(cfg['data']['img_rows'], cfg['data']['img_cols']),
         augmentations=data_aug)
 
     v_loader = data_loader(
         data_path,
         is_transform=True,
         split=cfg['data']['val_split'],
-        img_size=(cfg['data']['img_rows'], cfg['data']['img_cols']),)
+        #img_size=(cfg['data']['img_rows'], cfg['data']['img_cols']),
+        )
 
     n_classes = t_loader.n_classes
     trainloader = data.DataLoader(t_loader,
@@ -162,7 +163,7 @@ def train(cfg):
                         val_loss_meter.update(val_loss.item())
 
 
-                ptint("Iter %d Loss: %.4f" % (i + 1, val_loss_meter.avg))
+                print("Iter %d Loss: %.4f" % (i + 1, val_loss_meter.avg))
 
                 score, class_iou = running_metrics_val.get_scores()
                 for k, v in score.items():
